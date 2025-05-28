@@ -38,6 +38,8 @@ int main(int argc, char *argv[])
     auto optionExtraCaCerts = QCommandLineOption("extra-ca-certs", extraCaCertsDescription, "extra-ca-certs");
     auto certificateToTrustDescription = QString("The fingerprint of a certificate to always trust, even if invalid. The details of invalid certificates, fingerprint included, will be dumped in the console.");
     auto optionCertificateToTrust = QCommandLineOption("trusted-cert", certificateToTrustDescription, "trusted-cert");
+    auto userAgentStringDescription = QString("A custom user agent string for the http client.");
+    auto optionUserAgentString = QCommandLineOption("user-agent-string", userAgentStringDescription, "user-agent-string");
 
     QCommandLineParser parser;
     parser.addPositionalArgument("host", "The VPN gateway host with an optional port.", "[host:port]");
@@ -47,6 +49,7 @@ int main(int argc, char *argv[])
     parser.addOption(optionKeepOpen);
     parser.addOption(optionExtraCaCerts);
     parser.addOption(optionCertificateToTrust);
+    parser.addOption(optionUserAgentString);
     parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port.", "port"));
     parser.addHelpOption();
     parser.addVersionOption();
@@ -97,7 +100,9 @@ int main(int argc, char *argv[])
 
     auto certificateToTrust = parser.value(optionCertificateToTrust);
 
-    MainWindow w(keepOpen, urlRegex, certificateToTrust);
+    QString userAgentString = parser.value(optionUserAgentString);
+
+    MainWindow w(keepOpen, urlRegex, certificateToTrust, userAgentString);
     w.loadUrl(url);
     w.resize(1024, 760);
     w.move(findScreenWithCursor()->geometry().center() - w.rect().center());

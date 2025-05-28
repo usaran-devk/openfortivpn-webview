@@ -18,6 +18,7 @@ Q_LOGGING_CATEGORY(category, "webview")
 MainWindow::MainWindow(const bool keepOpen,
                        const QRegularExpression& urlToWaitForRegex,
                        const QString certificateHashToTrust,
+                       const QString userAgentString,
                        QWidget *parent) :
     QMainWindow(parent),
     webEngineProfile(new QWebEngineProfile("vpn", parent)),
@@ -44,6 +45,8 @@ MainWindow::MainWindow(const bool keepOpen,
     webEngineProfile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
     webEngineProfile->setCachePath(appDataLocation);
     webEngineProfile->setPersistentStoragePath(appDataLocation);
+    if (userAgentString != "")
+        webEngineProfile->setHttpUserAgent(userAgentString);
 
     connect(webEngine, &QWebEngineView::titleChanged, this, &MainWindow::updateTitle);
     connect(webEngine, &QWebEngineView::urlChanged, this, &MainWindow::handleUrlChange);
@@ -130,6 +133,9 @@ void MainWindow::onCertificateError(QWebEngineCertificateError certificateError)
 void MainWindow::handleUrlChange(const QUrl &url)
 {
     qCDebug(category) << url.toString();
+
+    QString userAgent = webEngineProfile->httpUserAgent();
+    qDebug() << "User Agent:" << userAgent;
 
     if (didSeeUrlToWaitFor) return;
 

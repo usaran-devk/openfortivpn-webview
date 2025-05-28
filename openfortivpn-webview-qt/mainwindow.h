@@ -18,6 +18,7 @@ public:
     explicit MainWindow(const bool keepOpen,
                         const QRegularExpression& urlToWaitForRegex,
                         const QString certificateHashToTrust,
+                        const QString userAgentString,
                         QWidget *parent = nullptr);
     ~MainWindow();
     void loadUrl(const QString &url);
